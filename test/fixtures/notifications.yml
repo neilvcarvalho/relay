@@ -1,0 +1,7 @@
+pending_banking:
+  user: one
+  app_name: com.mybank
+  title: Debit Alert
+  text: "Rs 500.00 debited from A/C XX1234 at AMAZON on 03-May-26"
+  raw_payload: '{"app":"com.mybank","title":"Debit Alert","text":"Rs 500.00 debited from A/C XX1234 at AMAZON on 03-May-26"}'
+  status: 0
