@@ -4,7 +4,7 @@ class YnabClientTest < ActiveSupport::TestCase
   setup do
     @connection = ynab_connections(:one)
     @client = YnabClient.new(@connection)
-    @ynab_url = "https://api.ynab.com/v1/budgets/#{@connection.budget_id}/transactions"
+    @ynab_url = "https://api.ynab.com/v1/plans/#{@connection.budget_id}/transactions"
     @valid_params = {
       account_id: @connection.account_id,
       date: "2026-05-03",
