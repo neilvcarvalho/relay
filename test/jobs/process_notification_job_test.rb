@@ -4,7 +4,7 @@ class ProcessNotificationJobTest < ActiveJob::TestCase
   setup do
     @notification = notifications(:pending_banking)
     @connection = ynab_connections(:one)
-    @ynab_url = "https://api.ynab.com/v1/plans/#{@connection.budget_id}/transactions"
+    @ynab_url = "https://api.ynab.com/v1/plans/#{@connection.plan_id}/transactions"
   end
 
   test "transitions notification to completed on success" do

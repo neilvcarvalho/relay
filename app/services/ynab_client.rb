@@ -15,7 +15,7 @@ class YnabClient
 
   def create_transaction(account_id:, date:, amount:, payee_name: nil, memo: nil)
     response = @api.transactions.create_transaction(
-      @connection.budget_id,
+      @connection.plan_id,
       {
         transaction: {
           account_id: account_id,
