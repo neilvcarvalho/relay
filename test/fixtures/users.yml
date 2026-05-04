@@ -3,7 +3,9 @@
 one:
   email_address: one@example.com
   password_digest: <%= password_digest %>
+  webhook_token: token_for_user_one
 
 two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
+  webhook_token: token_for_user_two

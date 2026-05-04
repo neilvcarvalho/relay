@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_011824) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_014221) do
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -25,7 +25,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_011824) do
     t.string "email_address", null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
+    t.string "webhook_token", default: "", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["webhook_token"], name: "index_users_on_webhook_token", unique: true
   end
 
   add_foreign_key "sessions", "users"
