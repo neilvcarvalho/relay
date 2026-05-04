@@ -1,1 +1,15 @@
 <h1>Relay</h1>
+
+<section>
+  <h2>YNAB</h2>
+  <% if @ynab_connection %>
+    <p>
+      Connected to <strong><%= @ynab_connection.plan_name.presence || @ynab_connection.plan_id %></strong>
+      &mdash; <%= @ynab_connection.account_name.presence || @ynab_connection.account_id %>
+    </p>
+    <%= link_to "Manage connection", ynab_connection_path %>
+  <% else %>
+    <p>No YNAB account connected.</p>
+    <%= link_to "Connect YNAB", new_ynab_connection_path %>
+  <% end %>
+</section>
