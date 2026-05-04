@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_015300) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_015453) do
   create_table "notifications", force: :cascade do |t|
     t.string "app_name"
     t.datetime "created_at", null: false
@@ -45,6 +45,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_015300) do
     t.index ["webhook_token"], name: "index_users_on_webhook_token", unique: true
   end
 
+  create_table "ynab_connections", force: :cascade do |t|
+    t.text "access_token", null: false
+    t.string "account_id", null: false
+    t.string "budget_id", null: false
+    t.string "budget_name"
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.text "refresh_token"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_ynab_connections_on_user_id", unique: true
+  end
+
   add_foreign_key "notifications", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "ynab_connections", "users"
 end
