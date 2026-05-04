@@ -70,8 +70,10 @@ Tasker (Android) → POST /webhooks/notifications
 ## Roadmap
 
 - [x] Project setup
-- [ ] Banking notification → YNAB entry (initial feature)
+- [x] Banking notification → YNAB entry (initial feature)
 - [ ] Support additional notification types and services
+- [ ] Chat interface with intent recognition — route user input to the right feature (e.g. upload a receipt photo → add YNAB entry + mark shopping list items as bought)
+- [ ] Home Assistant integration
 - [ ] Home-built replacements for third-party apps (TBD)
 
 ## Key Files
