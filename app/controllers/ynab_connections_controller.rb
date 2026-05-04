@@ -37,9 +37,12 @@ class YnabConnectionsController < ApplicationController
 
   def save_connection
     attrs = params.require(:ynab_connection)
-                  .permit(:access_token, :plan_id, :plan_name, :account_id, :account_name)
+                  .permit(:plan_id, :plan_name, :account_id, :account_name)
     connection = Current.user.ynab_connection || Current.user.build_ynab_connection
-    if connection.update(attrs)
+    connection.assign_attributes(attrs)
+    token = params.dig(:ynab_connection, :access_token).to_s.strip
+    connection.access_token = token if token.present?
+    if connection.save
       redirect_to ynab_connection_path, notice: "YNAB connected successfully."
     else
       flash.now[:alert] = connection.errors.full_messages.to_sentence

@@ -1,0 +1,10 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "b4e3fe46f5ecdabd693adcd2c230fa76942b9330e69e6863a0547da3cef4ef0d",
+      "note": "plan_id and account_id are YNAB API string identifiers, not Rails foreign keys. The user is setting their own YNAB credentials; there is no cross-user data access risk."
+    }
+  ],
+  "updated": "2026-05-04 13:51:50 -0300",
+  "brakeman_version": "8.0.4"
+}
