@@ -1,0 +1,81 @@
+<% content_for :title, "Connect YNAB" %>
+
+<h1>Connect YNAB</h1>
+
+<% if flash[:alert] %>
+  <p style="color: red"><%= flash[:alert] %></p>
+<% end %>
+
+<% if @plans %>
+  <%# Step 2: token validated — choose plan and account %>
+  <%= form_with url: ynab_connection_path, method: :post, scope: :ynab_connection do |f| %>
+    <%= f.hidden_field :access_token, value: @access_token %>
+
+    <div>
+      <label>Plan</label>
+      <%= f.select :plan_id,
+            @plans.map { |p| [p.name, p.id] },
+            { prompt: "Select a plan" },
+            { id: "plan-select", onchange: "filterAccounts(this.value)" } %>
+      <%= f.hidden_field :plan_name, id: "plan-name-input" %>
+    </div>
+
+    <div>
+      <label>Account</label>
+      <%= f.select :account_id,
+            @plans.flat_map { |p|
+              (p.accounts || [])
+                .reject(&:closed)
+                .select(&:on_budget)
+                .map { |a| [a.name, a.id, { "data-plan-id" => p.id, "data-plan-name" => p.name, "data-account-name" => a.name }] }
+            },
+            { prompt: "Select a plan first" },
+            { id: "account-select" } %>
+      <%= f.hidden_field :account_name, id: "account-name-input" %>
+    </div>
+
+    <%= f.submit "Save connection" %>
+  <% end %>
+
+  <script>
+    function filterAccounts(planId) {
+      const accountSelect = document.getElementById("account-select");
+      const planSelect = document.getElementById("plan-select");
+      const planNameInput = document.getElementById("plan-name-input");
+      const accountNameInput = document.getElementById("account-name-input");
+
+      // Update hidden plan name
+      const selectedPlan = planSelect.options[planSelect.selectedIndex];
+      planNameInput.value = selectedPlan ? selectedPlan.text : "";
+      accountNameInput.value = "";
+
+      // Show only accounts for the selected plan
+      Array.from(accountSelect.options).forEach(opt => {
+        if (opt.value === "") return; // keep prompt
+        opt.hidden = opt.dataset.planId !== planId;
+      });
+      accountSelect.value = "";
+    }
+
+    document.getElementById("account-select").addEventListener("change", function() {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById("account-name-input").value = selected ? selected.dataset.accountName : "";
+    });
+  </script>
+
+<% else %>
+  <%# Step 1: enter Personal Access Token %>
+  <p>
+    Enter your YNAB
+    <a href="https://app.ynab.com/settings/developer" target="_blank" rel="noopener">Personal Access Token</a>.
+    Relay will validate it and let you choose which plan and account to use.
+  </p>
+
+  <%= form_with url: ynab_connection_path, method: :post, scope: :ynab_connection do |f| %>
+    <div>
+      <label>Personal Access Token</label>
+      <%= f.password_field :access_token, required: true, autocomplete: "off", size: 60 %>
+    </div>
+    <%= f.submit "Validate & fetch plans" %>
+  <% end %>
+<% end %>

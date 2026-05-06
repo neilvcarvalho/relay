@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_015453) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_04_154317) do
   create_table "notifications", force: :cascade do |t|
     t.string "app_name"
     t.datetime "created_at", null: false
@@ -48,10 +48,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_015453) do
   create_table "ynab_connections", force: :cascade do |t|
     t.text "access_token", null: false
     t.string "account_id", null: false
-    t.string "budget_id", null: false
-    t.string "budget_name"
+    t.string "account_name"
     t.datetime "created_at", null: false
     t.datetime "expires_at"
+    t.string "plan_id", null: false
+    t.string "plan_name"
     t.text "refresh_token"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false

@@ -6,19 +6,19 @@ class YnabConnectionTest < ActiveSupport::TestCase
   end
 
   test "access_token is required" do
-    conn = YnabConnection.new(user: users(:two), budget_id: "b", account_id: "a")
+    conn = YnabConnection.new(user: users(:two), plan_id: "p", account_id: "a")
     assert_not conn.valid?
     assert_includes conn.errors[:access_token], "can't be blank"
   end
 
-  test "budget_id is required" do
+  test "plan_id is required" do
     conn = YnabConnection.new(user: users(:two), access_token: "tok", account_id: "a")
     assert_not conn.valid?
-    assert_includes conn.errors[:budget_id], "can't be blank"
+    assert_includes conn.errors[:plan_id], "can't be blank"
   end
 
   test "account_id is required" do
-    conn = YnabConnection.new(user: users(:two), access_token: "tok", budget_id: "b")
+    conn = YnabConnection.new(user: users(:two), access_token: "tok", plan_id: "p")
     assert_not conn.valid?
     assert_includes conn.errors[:account_id], "can't be blank"
   end
@@ -27,7 +27,7 @@ class YnabConnectionTest < ActiveSupport::TestCase
     conn = YnabConnection.create!(
       user: users(:two),
       access_token: "supersecret_pat",
-      budget_id: "b-1",
+      plan_id: "p-1",
       account_id: "a-1"
     )
     raw = ActiveRecord::Base.connection.select_value(

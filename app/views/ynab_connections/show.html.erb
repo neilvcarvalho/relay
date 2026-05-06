@@ -1,0 +1,21 @@
+<% content_for :title, "YNAB Connection" %>
+
+<h1>YNAB Connection</h1>
+
+<% if flash[:notice] %>
+  <p style="color: green"><%= flash[:notice] %></p>
+<% end %>
+
+<dl>
+  <dt>Plan</dt>
+  <dd><%= @connection.plan_name.presence || @connection.plan_id %></dd>
+
+  <dt>Account</dt>
+  <dd><%= @connection.account_name.presence || @connection.account_id %></dd>
+
+  <dt>Token status</dt>
+  <dd><%= @connection.token_expired? ? "Expired" : "Active" %></dd>
+</dl>
+
+<%= button_to "Disconnect YNAB", ynab_connection_path, method: :delete,
+      data: { confirm: "Remove the YNAB connection?" } %>

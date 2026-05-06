@@ -1,6 +1,7 @@
 one:
   user: one
   access_token: fake_ynab_pat_for_user_one
-  budget_id: budget-uuid-1234
-  budget_name: Personal Budget
+  plan_id: budget-uuid-1234
+  plan_name: Personal Budget
   account_id: account-uuid-5678
+  account_name: Checking
