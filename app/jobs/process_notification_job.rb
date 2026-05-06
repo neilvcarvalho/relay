@@ -1,7 +1,7 @@
 class ProcessNotificationJob < ApplicationJob
   queue_as :default
 
-  def perform(notification_id)
+  def perform(notification_id, account_id: nil)
     notification = Notification.find(notification_id)
     notification.mark_processing!
 
@@ -14,7 +14,7 @@ class ProcessNotificationJob < ApplicationJob
     result = BankingNotificationAgent.new.call(notification.text)
 
     YnabClient.new(connection).create_transaction(
-      account_id: connection.account_id,
+      account_id: account_id || connection.account_id,
       amount: result.amount,
       payee_name: result.payee_name,
       memo: result.memo,

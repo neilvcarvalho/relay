@@ -1,0 +1,43 @@
+ted_income:
+  user: one
+  app_name: com.mybank
+  position: 0
+  description: TED received
+  active: true
+  matcher_type: 0
+  text_pattern: "TED recebido"
+  action_type: YnabNotificationAction
+  action_id: <%= ActiveRecord::FixtureSet.identify(:checking) %>
+
+credit_card_purchase:
+  user: one
+  app_name: com.mybank
+  position: 1
+  description: Credit card purchase
+  active: true
+  matcher_type: 0
+  text_pattern: "Compra aprovada"
+  action_type: YnabNotificationAction
+  action_id: <%= ActiveRecord::FixtureSet.identify(:credit_card) %>
+
+discard_spam:
+  user: one
+  app_name: com.spam
+  position: 0
+  description: Discard spam
+  active: true
+  matcher_type: 0
+  text_pattern: "promo"
+  action_type: DiscardNotificationAction
+  action_id: <%= ActiveRecord::FixtureSet.identify(:one) %>
+
+llm_rule:
+  user: one
+  app_name: com.mybank
+  position: 2
+  description: Urgent tone
+  active: true
+  matcher_type: 1
+  llm_instructions: "The text has an urgent tone"
+  action_type: YnabNotificationAction
+  action_id: <%= ActiveRecord::FixtureSet.identify(:checking) %>

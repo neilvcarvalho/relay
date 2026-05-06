@@ -1,0 +1,7 @@
+checking:
+  account_id: account-uuid-checking
+  account_name: Checking
+
+credit_card:
+  account_id: account-uuid-credit-card
+  account_name: Credit Card
