@@ -8,7 +8,7 @@ class Webhooks::NotificationsController < ActionController::API
       text: params[:text],
       raw_payload: request.raw_post
     )
-    ProcessNotificationJob.perform_later(notification.id)
+    MatchAndDispatchNotificationJob.perform_later(notification.id)
     head :accepted
   end
 

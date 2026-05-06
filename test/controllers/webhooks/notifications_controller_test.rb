@@ -13,8 +13,8 @@ class Webhooks::NotificationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :accepted
   end
 
-  test "enqueues ProcessNotificationJob with valid token" do
-    assert_enqueued_with(job: ProcessNotificationJob) do
+  test "enqueues MatchAndDispatchNotificationJob with valid token" do
+    assert_enqueued_with(job: MatchAndDispatchNotificationJob) do
       post webhooks_notifications_path, params: @payload, headers: @headers
     end
   end

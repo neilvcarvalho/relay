@@ -1,0 +1,58 @@
+<% content_for :title, "Notification Rules" %>
+
+<h1>Notification Rules</h1>
+
+<% if flash[:notice] %>
+  <p style="color: green"><%= flash[:notice] %></p>
+<% end %>
+
+<% @rules.group_by(&:app_name).each do |app_name, rules| %>
+  <h2><%= app_name %></h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Matcher</th>
+        <th>Criteria</th>
+        <th>Action</th>
+        <th>Description</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rules.each do |rule| %>
+        <tr>
+          <td><%= rule.position + 1 %></td>
+          <td><%= rule.matcher_type %></td>
+          <td>
+            <% if rule.string? %>
+              <code><%= rule.text_pattern %></code>
+            <% elsif rule.llm? %>
+              <%= truncate(rule.llm_instructions, length: 60) %>
+            <% end %>
+          </td>
+          <td>
+            <% if rule.ynab_notification_action? %>
+              YNAB &rarr; <%= rule.ynab_notification_action.account_name.presence || rule.ynab_notification_action.account_id %>
+            <% elsif rule.discard_notification_action? %>
+              Discard
+            <% end %>
+          </td>
+          <td><%= rule.description %></td>
+          <td>
+            <%= button_to "↑ Move up", move_notification_rule_path(rule), method: :patch %>
+            <%= button_to "Remove", notification_rule_path(rule), method: :delete,
+                  data: { confirm: "Remove this rule?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @rules.empty? %>
+  <p>No rules yet.</p>
+<% end %>
+
+<p><%= link_to "Add rule", new_notification_rule_path %></p>
+<p><%= link_to "Back to waiting area", notifications_path %></p>

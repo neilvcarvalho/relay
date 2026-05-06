@@ -1,0 +1,105 @@
+<% content_for :title, "Review Notification" %>
+
+<h1>Review Notification</h1>
+
+<dl>
+  <dt>App</dt>
+  <dd><%= @notification.app_name %></dd>
+
+  <dt>Title</dt>
+  <dd><%= @notification.title %></dd>
+
+  <dt>Text</dt>
+  <dd><pre><%= @notification.text %></pre></dd>
+
+  <dt>Received</dt>
+  <dd><%= @notification.created_at.strftime("%Y-%m-%d %H:%M:%S") %></dd>
+</dl>
+
+<hr>
+
+<h2>Dispatch to YNAB</h2>
+
+<%= form_with url: notification_path(@notification), method: :patch do |f| %>
+  <div>
+    <label>Plan</label>
+    <%= select_tag :plan_id,
+          options_for_select(@plans.map { |p| [p.name, p.id] }),
+          prompt: "Select a plan",
+          id: "plan-select",
+          onchange: "filterAccounts(this.value)" %>
+  </div>
+
+  <div>
+    <label>Account</label>
+    <%= select_tag :account_id,
+          options_for_select(
+            @plans.flat_map { |p|
+              (p.accounts || []).map { |a|
+                [a.name, a.id, { "data-plan-id" => p.id, "data-account-name" => a.name, "data-plan-id-val" => p.id }]
+              }
+            }
+          ),
+          prompt: "Select a plan first",
+          id: "account-select" %>
+    <input type="hidden" name="account_name" id="account-name-input">
+  </div>
+
+  <details>
+    <summary>Save as rule for future notifications</summary>
+    <div>
+      <label>
+        <%= check_box_tag :save_as_rule, "1", false, id: "save-as-rule-checkbox" %>
+        Save as a rule
+      </label>
+    </div>
+    <div id="rule-fields" style="display:none">
+      <div>
+        <label>Match text pattern (substring)</label>
+        <%= text_field_tag :text_pattern, @notification.text %>
+      </div>
+      <div>
+        <label>Description</label>
+        <%= text_field_tag :description %>
+      </div>
+    </div>
+  </details>
+
+  <%= f.submit "Dispatch to YNAB" %>
+<% end %>
+
+<hr>
+
+<%= button_to "Discard", notification_path(@notification), method: :patch,
+      params: { discard: "1" },
+      data: { confirm: "Discard this notification? It will be marked as ignored." } %>
+
+<p><%= link_to "Back to waiting area", notifications_path %></p>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const planSelect = document.getElementById("plan-select");
+    if (planSelect) filterAccounts(planSelect.value);
+  });
+
+  function filterAccounts(planId) {
+    const accountSelect = document.getElementById("account-select");
+    const accountNameInput = document.getElementById("account-name-input");
+
+    Array.from(accountSelect.options).forEach(opt => {
+      if (opt.value === "") return;
+      opt.hidden = opt.dataset.planId !== planId;
+    });
+    accountSelect.value = "";
+    accountNameInput.value = "";
+  }
+
+  document.getElementById("account-select").addEventListener("change", function () {
+    const selected = this.options[this.selectedIndex];
+    document.getElementById("account-name-input").value = selected ? selected.dataset.accountName : "";
+  });
+
+  document.getElementById("save-as-rule-checkbox").addEventListener("change", function () {
+    document.getElementById("rule-fields").style.display = this.checked ? "block" : "none";
+  });
+</script>

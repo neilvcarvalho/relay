@@ -1,0 +1,36 @@
+<% content_for :title, "Pending Notifications" %>
+
+<h1>Pending Notifications</h1>
+
+<% if flash[:notice] %>
+  <p style="color: green"><%= flash[:notice] %></p>
+<% end %>
+
+<% if @notifications.empty? %>
+  <p>No pending notifications.</p>
+<% else %>
+  <table>
+    <thead>
+      <tr>
+        <th>Received</th>
+        <th>App</th>
+        <th>Title</th>
+        <th>Text</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @notifications.each do |n| %>
+        <tr>
+          <td><%= n.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td><%= n.app_name %></td>
+          <td><%= n.title %></td>
+          <td><%= truncate(n.text, length: 80) %></td>
+          <td><%= link_to "Review", notification_path(n) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<p><%= link_to "Manage rules", notification_rules_path %></p>
