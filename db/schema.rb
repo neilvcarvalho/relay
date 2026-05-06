@@ -10,7 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_04_154317) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_06_000003) do
+  create_table "discard_notification_actions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "notification_rules", force: :cascade do |t|
+    t.integer "action_id", null: false
+    t.string "action_type", null: false
+    t.boolean "active", default: true, null: false
+    t.string "app_name", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.text "llm_instructions"
+    t.integer "matcher_type", null: false
+    t.integer "position", default: 0, null: false
+    t.string "text_pattern"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["action_type", "action_id"], name: "index_notification_rules_on_action_type_and_action_id"
+    t.index ["user_id", "app_name", "position"], name: "index_notification_rules_on_user_id_and_app_name_and_position", unique: true
+    t.index ["user_id"], name: "index_notification_rules_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.string "app_name"
     t.datetime "created_at", null: false
@@ -59,6 +82,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_04_154317) do
     t.index ["user_id"], name: "index_ynab_connections_on_user_id", unique: true
   end
 
+  create_table "ynab_notification_actions", force: :cascade do |t|
+    t.string "account_id", null: false
+    t.string "account_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "notification_rules", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "ynab_connections", "users"
