@@ -8,7 +8,7 @@
 
 <% if @plans %>
   <%# Step 2: token validated — choose plan and account %>
-  <%= form_with url: ynab_connection_path, method: :post do |f| %>
+  <%= form_with url: ynab_connection_path, method: :post, scope: :ynab_connection do |f| %>
     <%= f.hidden_field :access_token, value: @access_token %>
 
     <div>
@@ -71,7 +71,7 @@
     Relay will validate it and let you choose which plan and account to use.
   </p>
 
-  <%= form_with url: ynab_connection_path, method: :post do |f| %>
+  <%= form_with url: ynab_connection_path, method: :post, scope: :ynab_connection do |f| %>
     <div>
       <label>Personal Access Token</label>
       <%= f.password_field :access_token, required: true, autocomplete: "off", size: 60 %>

@@ -45,6 +45,15 @@ class YnabConnectionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "select[id='account-select']"
   end
 
+  test "create step 1 sends the submitted token to YNAB" do
+    @user.ynab_connection.destroy
+    stub = stub_ynab_plans
+
+    post ynab_connection_path, params: { ynab_connection: { access_token: "valid_token" } }
+
+    assert_requested stub, times: 1
+  end
+
   test "create step 1 re-renders form with error when token is invalid" do
     @user.ynab_connection.destroy
     stub_request(:get, "https://api.ynab.com/v1/plans").with(query: hash_including("include_accounts" => "true"))
@@ -117,7 +126,9 @@ class YnabConnectionsControllerTest < ActionDispatch::IntegrationTest
       }
     }.to_json
 
-    stub_request(:get, "https://api.ynab.com/v1/plans").with(query: hash_including("include_accounts" => "true"))
+    stub_request(:get, "https://api.ynab.com/v1/plans")
+      .with(query: hash_including("include_accounts" => "true"),
+            headers: { "Authorization" => "Bearer valid_token" })
       .to_return(status: 200, body: body, headers: { "Content-Type" => "application/json" })
   end
 end
