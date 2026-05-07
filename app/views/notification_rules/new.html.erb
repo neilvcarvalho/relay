@@ -1,0 +1,114 @@
+<% content_for :title, "New Notification Rule" %>
+
+<h1>New Notification Rule</h1>
+
+<% if flash[:alert] %>
+  <p style="color: red"><%= flash[:alert] %></p>
+<% end %>
+
+<%= form_with url: notification_rules_path, method: :post, scope: :notification_rule do |f| %>
+  <div>
+    <label>App name</label>
+    <%= f.text_field :app_name, required: true, placeholder: "e.g. com.mybank" %>
+  </div>
+
+  <div>
+    <label>Matcher type</label>
+    <%= f.select :matcher_type,
+          [["String match (fast)", "string"], ["LLM classification (slow)", "llm"]],
+          {},
+          { id: "matcher-type-select", onchange: "toggleMatcherFields(this.value)" } %>
+  </div>
+
+  <div id="string-fields">
+    <label>Text pattern (case-insensitive substring)</label>
+    <%= f.text_field :text_pattern, placeholder: "e.g. TED recebido" %>
+  </div>
+
+  <div id="llm-fields" style="display:none">
+    <label>LLM instructions</label>
+    <%= f.text_area :llm_instructions, rows: 3, placeholder: "e.g. The text has an urgent tone" %>
+  </div>
+
+  <div>
+    <label>Action</label>
+    <div>
+      <label>
+        <input type="radio" name="notification_rule[action_type]" value="ynab" checked
+               onchange="toggleActionFields(this.value)">
+        Send to YNAB
+      </label>
+      <label>
+        <input type="radio" name="notification_rule[action_type]" value="discard"
+               onchange="toggleActionFields(this.value)">
+        Discard
+      </label>
+    </div>
+  </div>
+
+  <div id="ynab-fields">
+    <label>Plan</label>
+    <%= select_tag "notification_rule[plan_id]",
+          options_for_select(@plans.map { |p| [p.name, p.id] }),
+          prompt: "Select a plan",
+          id: "plan-select",
+          onchange: "filterAccounts(this.value)" %>
+
+    <label>Account</label>
+    <%= select_tag "notification_rule[account_id]",
+          options_for_select(
+            @plans.flat_map { |p|
+              (p.accounts || []).map { |a|
+                [a.name, a.id, { "data-plan-id" => p.id, "data-account-name" => a.name }]
+              }
+            }
+          ),
+          prompt: "Select a plan first",
+          id: "account-select" %>
+    <input type="hidden" name="notification_rule[account_name]" id="account-name-input">
+  </div>
+
+  <div>
+    <label>Description</label>
+    <%= f.text_field :description, placeholder: "Optional label for this rule" %>
+  </div>
+
+  <%= f.submit "Save rule" %>
+<% end %>
+
+<p><%= link_to "Cancel", notification_rules_path %></p>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const planSelect = document.getElementById("plan-select");
+    if (planSelect) filterAccounts(planSelect.value);
+  });
+
+  function toggleMatcherFields(type) {
+    document.getElementById("string-fields").style.display = type === "string" ? "block" : "none";
+    document.getElementById("llm-fields").style.display   = type === "llm"    ? "block" : "none";
+  }
+
+  function toggleActionFields(type) {
+    document.getElementById("ynab-fields").style.display = type === "ynab" ? "block" : "none";
+  }
+
+  function filterAccounts(planId) {
+    const accountSelect = document.getElementById("account-select");
+    const accountNameInput = document.getElementById("account-name-input");
+    Array.from(accountSelect.options).forEach(opt => {
+      if (opt.value === "") return;
+      opt.hidden = opt.dataset.planId !== planId;
+    });
+    accountSelect.value = "";
+    if (accountNameInput) accountNameInput.value = "";
+  }
+
+  const accountSelect = document.getElementById("account-select");
+  if (accountSelect) {
+    accountSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById("account-name-input").value = selected ? selected.dataset.accountName : "";
+    });
+  }
+</script>

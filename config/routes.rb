@@ -13,6 +13,11 @@ Rails.application.routes.draw do
 
   resource :ynab_connection, only: [ :show, :new, :create, :destroy ]
 
+  resources :notifications, only: [ :index, :show, :update ]
+  resources :notification_rules, only: [ :index, :new, :create, :destroy ] do
+    member { patch :move }
+  end
+
   namespace :webhooks do
     resources :notifications, only: [ :create ]
   end
